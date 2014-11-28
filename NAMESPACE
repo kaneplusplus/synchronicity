@@ -1,0 +1,17 @@
+import(methods, bigmemory.sri)
+export(uuid,boost.mutex)
+exportClasses(
+  mutex,
+  boost.mutex,
+  descriptor,
+  boost.mutex.descriptor)
+exportMethods(
+  lock, 
+  lock.shared,
+  unlock,
+  is.timed,
+  timeout,
+  shared.name,
+  describe,
+  attach.mutex)
+useDynLib(synchronicity)
