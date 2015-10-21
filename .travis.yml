@@ -1,0 +1,11 @@
+language: r
+sudo: required
+warnings_are_errors: false
+
+r_binary_packages:
+  - bigmemory.sri
+  - BH
+
+after_success:
+  - Rscript -e 'library(covr);coveralls()'
+
