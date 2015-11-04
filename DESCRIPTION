@@ -5,10 +5,11 @@ Title: Boost Mutex Functionality in R
 Author: Michael J. Kane <kaneplusplus@gmail.com>
 Maintainer: Michael J. Kane <bigmemoryauthors@gmail.com>
 Contact: Michael J. Kane <bigmemoryauthors@gmail.com>
-Depends: methods, bigmemory.sri
+Imports: methods, bigmemory.sri
 LinkingTo: BH
 Description: Boost mutex functionality in R.
 License: LGPL-3 | Apache License 2.0
 Copyright: Michael J. Kane
 URL: http://www.bigmemory.org
 LazyLoad: yes
+RoxygenNote: 5.0.0

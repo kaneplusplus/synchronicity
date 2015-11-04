@@ -1,72 +1,92 @@
 # MUTEXES
 
-
+#' @export
 setClass('mutex')
+
+#' @export
 setGeneric('lock', function(m, ...) standardGeneric('lock'))
+
+#' @export
 setGeneric('lock.shared', function(m, ...) standardGeneric('lock.shared'))
+
+#' @export
 setGeneric('unlock', function(m, ...) standardGeneric('unlock'))
 
+#' @export
 setClass('boost.mutex', contains='mutex', 
   representation(isRead='logical', mutexInfoAddr='externalptr'))
 
+#' @export
 setGeneric('read', function(m) standardGeneric('read'))
-setMethod('read', signature(m='boost.mutex'), function(m) 
-  return(.Call("IsRead", m@mutexInfoAddr)))
 
+#' @export
+setMethod('read', signature(m='boost.mutex'), function(m) 
+  return(.Call("IsRead", m@mutexInfoAddr, PACKAGE="synchronicity")))
+
+#' @export
 setMethod('lock', signature(m='boost.mutex'),
   function(m, ...)
   {
     block = match.call()[['block']]
     if (is.null(block)) block=TRUE
     if (!is.logical(block)) stop('The block argument should be logical')
-    return(
-      .Call(ifelse(block, 'boost_lock', 'boost_try_lock'), m@mutexInfoAddr))
+    block_call = ifelse(block, 'boost_lock', 'boost_try_lock')
+    .Call(block_call, m@mutexInfoAddr, PACKAGE="synchronicity")
   })
+
+#' @export
 setMethod('lock.shared', signature(m='boost.mutex'),
   function(m, ...)
   {
     block = match.call()[['block']]
     if (is.null(block)) block=TRUE
     if (!is.logical(block)) stop('The block argument should be logical')
-    return( 
-      .Call(ifelse(block, 'boost_lock_shared', 'boost_try_lock_shared'),
-        m@mutexInfoAddr))
+    block_call = ifelse(block, 'boost_lock_shared', 'boost_try_lock_shared')  
+    .Call(block_call, m@mutexInfoAddr, PACKAGE="synchronicity")
   })
+
+#' @export
 setMethod('unlock', signature(m='boost.mutex'),
   function(m, ...)
   {
-    return(
-      .Call( ifelse(read(m), 'boost_unlock_shared', 'boost_unlock'),
-        m@mutexInfoAddr) )
+    block_call = ifelse(read(m), 'boost_unlock_shared', 'boost_unlock')
+    .Call(block_call, m@mutexInfoAddr, PACKAGE="synchronicity")
   })
 
+#' @export
 setGeneric('shared.name', function(m) standardGeneric('shared.name'))
 
+#' @export
 setMethod('shared.name', signature(m='boost.mutex'), 
   function(m) 
   {
-    return(.Call('GetResourceName', m@mutexInfoAddr))
+    .Call('GetResourceName', m@mutexInfoAddr, PACKAGE="synchronicity")
   })
 
+#' @export
 setGeneric('timeout', function(m) standardGeneric('timeout'))
 
+#' @export
 setMethod('timeout', signature(m='boost.mutex'),
   function(m)
   {
-    return(.Call('GetTimeout', m@mutexInfoAddr))
+    .Call('GetTimeout', m@mutexInfoAddr, PACKAGE="synchronicity")
 #    ret = .Call('GetTimeout', m@mutexInfoAddr)
 #    if (length(ret) == 0) ret = Inf
 #    return(ret)
   })
 
+#' @export
 setGeneric('is.timed', function(m) standardGeneric('is.timed'))
+
+#' @export
 setMethod('is.timed', signature(m='boost.mutex'),
   function(m)
   {
     return(!is.null(timeout(m)))
   })
 
-# The constructor for a boost.mutex
+#' @export
 boost.mutex=function(sharedName=NULL, timeout=NULL)
 {
   isRead = TRUE
@@ -82,18 +102,28 @@ boost.mutex=function(sharedName=NULL, timeout=NULL)
   {
     stop("You must specify a timeout greater than zero.")
   }
-  mutexInfoAddr=.Call('CreateBoostMutexInfo', sharedName, as.double(timeout))
+  mutexInfoAddr=.Call('CreateBoostMutexInfo', sharedName, as.double(timeout),
+                      PACKAGE="synchronicity")
   return(new('boost.mutex', isRead=isRead, mutexInfoAddr=mutexInfoAddr))
 }
 
 
+#' @export
 setClass('descriptor', representation(description='list'))
+
+#' @export
 setGeneric('description', function(x) standardGeneric('description'))
+
+#' @export
 setMethod('description', signature(x='descriptor'),
   function(x) return(x@description))
 
+#' @export
 setClass('boost.mutex.descriptor', contains='descriptor')
 
+#' @importFrom bigmemory.sri describe
+#' @import methods
+#' @export
 setMethod('describe', signature(x='boost.mutex'),
   function(x)
   {
@@ -102,9 +132,11 @@ setMethod('describe', signature(x='boost.mutex'),
       timeout=timeout(x))))
   })
 
+#' @export
 setGeneric('attach.mutex', function(obj, ...) 
   standardGeneric('attach.mutex'))
 
+#' @export
 setMethod('attach.mutex', signature(obj='character'),
   function(obj, ...)
   {
@@ -133,6 +165,7 @@ setMethod('attach.mutex', signature(obj='character'),
     return(attach.mutex(info, path=path))
   })
 
+#' @export
 setMethod('attach.mutex', signature(obj='boost.mutex.descriptor'),
   function(obj, ...)
   {
