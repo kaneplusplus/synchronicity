@@ -3,6 +3,8 @@
 #' @export
 uuid=function()
 {
-  return(.Call('boost_create_uuid', PACKAGE="synchronicity"))
+  uuid_len = 24
+  if (Sys.info()['sysname'] == "Darwin") uuid_len = 15
+  paste(sample(c(letters, LETTERS), uuid_len, replace=TRUE), collapse="")
 }
 
