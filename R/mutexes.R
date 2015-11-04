@@ -1,5 +1,8 @@
 # MUTEXES
 
+#' @import Rcpp
+#' @useDynLib synchronicity
+
 #' @export
 setClass('mutex')
 
@@ -21,7 +24,7 @@ setGeneric('read', function(m) standardGeneric('read'))
 
 #' @export
 setMethod('read', signature(m='boost.mutex'), function(m) 
-  return(.Call("IsRead", m@mutexInfoAddr, PACKAGE="synchronicity")))
+  IsRead(m@mutexInfoAddr))
 
 #' @export
 setMethod('lock', signature(m='boost.mutex'),
@@ -30,8 +33,8 @@ setMethod('lock', signature(m='boost.mutex'),
     block = match.call()[['block']]
     if (is.null(block)) block=TRUE
     if (!is.logical(block)) stop('The block argument should be logical')
-    block_call = ifelse(block, 'boost_lock', 'boost_try_lock')
-    .Call(block_call, m@mutexInfoAddr, PACKAGE="synchronicity")
+    block_call = ifelse(block, boost_lock, boost_try_lock)
+    block_call(m@mutexInfoAddr)
   })
 
 #' @export
@@ -41,16 +44,16 @@ setMethod('lock.shared', signature(m='boost.mutex'),
     block = match.call()[['block']]
     if (is.null(block)) block=TRUE
     if (!is.logical(block)) stop('The block argument should be logical')
-    block_call = ifelse(block, 'boost_lock_shared', 'boost_try_lock_shared')  
-    .Call(block_call, m@mutexInfoAddr, PACKAGE="synchronicity")
+    block_call = ifelse(block, boost_lock_shared, boost_try_lock_shared)
+    block_call(m@mutexInfoAddr)
   })
 
 #' @export
 setMethod('unlock', signature(m='boost.mutex'),
   function(m, ...)
   {
-    block_call = ifelse(read(m), 'boost_unlock_shared', 'boost_unlock')
-    .Call(block_call, m@mutexInfoAddr, PACKAGE="synchronicity")
+    block_call = ifelse(read(m), boost_unlock_shared, boost_unlock)
+    block_call(m@mutexInfoAddr)
   })
 
 #' @export
@@ -58,23 +61,14 @@ setGeneric('shared.name', function(m) standardGeneric('shared.name'))
 
 #' @export
 setMethod('shared.name', signature(m='boost.mutex'), 
-  function(m) 
-  {
-    .Call('GetResourceName', m@mutexInfoAddr, PACKAGE="synchronicity")
-  })
+  function(m) GetResourceName(m@mutexInfoAddr) )
 
 #' @export
 setGeneric('timeout', function(m) standardGeneric('timeout'))
 
 #' @export
 setMethod('timeout', signature(m='boost.mutex'),
-  function(m)
-  {
-    .Call('GetTimeout', m@mutexInfoAddr, PACKAGE="synchronicity")
-#    ret = .Call('GetTimeout', m@mutexInfoAddr)
-#    if (length(ret) == 0) ret = Inf
-#    return(ret)
-  })
+  function(m) GetTimeout(m@mutexInfoAddr))
 
 #' @export
 setGeneric('is.timed', function(m) standardGeneric('is.timed'))
@@ -102,8 +96,7 @@ boost.mutex=function(sharedName=NULL, timeout=NULL)
   {
     stop("You must specify a timeout greater than zero.")
   }
-  mutexInfoAddr=.Call('CreateBoostMutexInfo', sharedName, as.double(timeout),
-                      PACKAGE="synchronicity")
+  mutexInfoAddr=CreateBoostMutexInfo(sharedName, as.double(timeout))
   return(new('boost.mutex', isRead=isRead, mutexInfoAddr=mutexInfoAddr))
 }
 

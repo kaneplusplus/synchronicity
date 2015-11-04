@@ -3,7 +3,8 @@
 
 #include <vector>
 #include <string>
-#include <Rdefines.h>
+
+#include <Rcpp.h>
 
 using namespace std;
 
@@ -23,13 +24,13 @@ SEXP StringVec2RChar( const vector<string> &strVec,
   T indices, const unsigned long indicesLength )
 {
   if (strVec.empty())
-    return NULL_USER_OBJECT;
-  SEXP ret = PROTECT(allocVector(STRSXP, indicesLength));
+    return R_NilValue;
+  SEXP ret = Rf_protect(Rf_allocVector(STRSXP, indicesLength));
   unsigned long i;
   for (i=0; i < indicesLength; ++i)
   {
     SET_STRING_ELT(ret, i, 
-      mkChar(strVec[static_cast<unsigned long>(indices[i])-1].c_str()));
+      Rf_mkChar(strVec[static_cast<unsigned long>(indices[i])-1].c_str()));
   }
   UNPROTECT(1);
   return ret;
@@ -41,21 +42,21 @@ struct NewVec;
 
 template<>
 struct NewVec<int>
-{SEXP operator()(long n) const {return NEW_INTEGER(n);};};
+{SEXP operator()(long n) const {return Rf_allocVector(INTSXP, n);};};
 
 template<>
 struct NewVec<double>
-{SEXP operator()(long n) const {return NEW_NUMERIC(n);};};
+{SEXP operator()(long n) const {return Rf_allocVector(REALSXP, n);};};
 
 template<typename T>
 struct VecPtr;
 
 template<>
 struct VecPtr<int>
-{int* operator()(SEXP vec) const {return INTEGER_DATA(vec);};};
+{int* operator()(SEXP vec) const {return INTEGER(vec);};};
 
 template<>
 struct VecPtr<double>
-{double* operator()(SEXP vec) const {return NUMERIC_DATA(vec);};};
+{double* operator()(SEXP vec) const {return REAL(vec);};};
 
 #endif // BIGMEMORY_UTIL_HPP

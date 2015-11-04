@@ -27,7 +27,7 @@
 
 vector<string> RChar2StringVec( SEXP charVec )
 {
-  vector<string> ret( GET_LENGTH(charVec) );
+  vector<string> ret( Rf_length(charVec) );
   unsigned long i;
   for (i=0; i < ret.size(); ++i)
   {
@@ -56,21 +56,21 @@ std::string RChar2String(SEXP str)
 SEXP StringVec2RChar( const vector<string> &strVec )
 {
   if (strVec.empty())
-    return NULL_USER_OBJECT;
-  SEXP ret = PROTECT(allocVector(STRSXP, strVec.size()));
+    return R_NilValue;
+  SEXP ret = Rf_protect(Rf_allocVector(STRSXP, strVec.size()));
   unsigned long i;
   for (i=0; i < strVec.size(); ++i)
   {
-    SET_STRING_ELT(ret, i, mkChar(strVec[i].c_str()));
+    SET_STRING_ELT(ret, i, Rf_mkChar(strVec[i].c_str()));
   }
-  UNPROTECT(1);
+  Rf_unprotect(1);
   return ret;
 }
 
 SEXP String2RChar(const std::string &str)
 {
-  SEXP ret = PROTECT(allocVector(STRSXP, 1));
-  SET_STRING_ELT(ret, 0, mkChar(str.c_str()));
-  UNPROTECT(1);
+  SEXP ret = Rf_protect(Rf_allocVector(STRSXP, 1));
+  SET_STRING_ELT(ret, 0, Rf_mkChar(str.c_str()));
+  Rf_unprotect(1);
   return ret;
 }
