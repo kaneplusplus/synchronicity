@@ -19,9 +19,19 @@ setGeneric('unlock', function(m, ...) standardGeneric('unlock'))
 setClass('boost.mutex', contains='mutex', 
   representation(isRead='logical', mutexInfoAddr='externalptr'))
 
+#' @title Is it a read (shared) mutex?
+#' 
+#' @description Tells the user if a mutex is a read (shared) mutex. If it is 
+#' not then it must be a write (exclusive) mutex.
+#' @docType methods
+#' @rdname read-methods
+#' @param m the mutex 
+#' @return TRUE if the mutex is read (shared), FALSE otherwise.
 #' @export
 setGeneric('read', function(m) standardGeneric('read'))
 
+#' @rdname read-methods
+#' @aliases read,boost.mutex-method
 #' @export
 setMethod('read', signature(m='boost.mutex'), function(m) 
   IsRead(m@mutexInfoAddr))
@@ -101,16 +111,36 @@ boost.mutex=function(sharedName=NULL, timeout=NULL)
 }
 
 
+#' @title An S4 class holding mutex description information.
+#' 
+#' @description Objects of class description allow users to ``attach'' 
+#' to existing mutexes within or across processes.
+#' @slot description the list of description information.
 #' @export
 setClass('descriptor', representation(description='list'))
 
+#' @title Accessor for descriptor objects
+#' 
+#' @description Retrieve the list of description information from a 
+#' descriptor object.
+#' @docType methods
+#' @rdname description-methods
+#' @param x the descriptor object.
+#' @return a list of description information.
 #' @export
 setGeneric('description', function(x) standardGeneric('description'))
 
+#' @rdname description-methods
+#' @aliases description,descriptor-method
 #' @export
 setMethod('description', signature(x='descriptor'),
   function(x) return(x@description))
 
+#' @title An S4 class holding boost.mutex description information.
+#' 
+#' @description Objects of class description allow users to ``attach'' 
+#' to existing mutexes within or across processes.
+#' @slot description the list of description information.
 #' @export
 setClass('boost.mutex.descriptor', contains='descriptor')
 
@@ -125,10 +155,21 @@ setMethod('describe', signature(x='boost.mutex'),
       timeout=timeout(x))))
   })
 
+#' @title Attach to an existing mutex.
+#' 
+#' @description Attach to an existing mutex using either a file or 
+#' description object
+#' @docType methods
+#' @rdname attach.mutex-methods
+#' @param obj the descriptor object.
+#' @param ... other arguments needed by attach.
+#' @return A mutex.
 #' @export
 setGeneric('attach.mutex', function(obj, ...) 
   standardGeneric('attach.mutex'))
 
+#' @rdname attach.mutex-methods
+#' @aliases attach.mutex,character-method
 #' @export
 setMethod('attach.mutex', signature(obj='character'),
   function(obj, ...)
@@ -158,6 +199,8 @@ setMethod('attach.mutex', signature(obj='character'),
     return(attach.mutex(info, path=path))
   })
 
+#' @rdname attach.mutex-methods
+#' @aliases attach.mutex,boost.mutex.descriptor-method
 #' @export
 setMethod('attach.mutex', signature(obj='boost.mutex.descriptor'),
   function(obj, ...)
