@@ -23,7 +23,7 @@
 
 #include <limits.h>
 #include <math.h>
-#include "synchronicity/util.h"
+#include "../inst/synchronicity/util.h"
 
 vector<string> RChar2StringVec( SEXP charVec )
 {
