@@ -6,8 +6,8 @@
 
 #include <Rcpp.h>
 
-#include "synchronicity/util.h"
-#include "synchronicity/SharedCounter.h"
+#include "../inst/synchronicity/util.h"
+#include "../inst/synchronicity/SharedCounter.h"
 
 using namespace std;
 using namespace boost;

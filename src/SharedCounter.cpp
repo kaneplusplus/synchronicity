@@ -1,6 +1,6 @@
 #include <boost/interprocess/shared_memory_object.hpp>
-#include "synchronicity/SharedCounter.h"
-#include "synchronicity/util.h"
+#include "../inst/synchronicity/SharedCounter.h"
+#include "../inst/synchronicity/util.h"
 
 bool SharedCounter::reset()
 {
