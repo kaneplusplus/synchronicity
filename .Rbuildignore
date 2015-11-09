@@ -6,3 +6,4 @@ appveyor.yml
 .gitignore
 doc
 scratch
+cran-comments.md
