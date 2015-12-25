@@ -3,6 +3,7 @@
 #include <boost/interprocess/sync/named_upgradable_mutex.hpp>
 #include <boost/interprocess/sync/named_mutex.hpp>
 #include <boost/bind.hpp>
+#include <boost/date_time/local_time/local_date_time.hpp>
 
 #include <Rcpp.h>
 
