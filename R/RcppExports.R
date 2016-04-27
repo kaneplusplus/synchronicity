@@ -5,6 +5,10 @@ CreateBoostMutexInfo <- function(resourceName, timeout) {
     .Call('synchronicity_CreateBoostMutexInfo', PACKAGE = 'synchronicity', resourceName, timeout)
 }
 
+AttachBoostMutexInfo <- function(resourceName, timeout) {
+    .Call('synchronicity_AttachBoostMutexInfo', PACKAGE = 'synchronicity', resourceName, timeout)
+}
+
 GetResourceName <- function(mutexInfoAddr) {
     .Call('synchronicity_GetResourceName', PACKAGE = 'synchronicity', mutexInfoAddr)
 }

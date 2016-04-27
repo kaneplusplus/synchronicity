@@ -20,6 +20,9 @@ The \code{describe} function returns a \code{boost.mutex.descriptor} object.
   m = boost.mutex()
   mm = attach.mutex(describe(m))
   # Now, both m and mm specify the same mutex.
+  rm(m)
+  rm(mm)
+  gc()
 }
 \keyword{programming}
 \keyword{misc}

@@ -17,6 +17,18 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// AttachBoostMutexInfo
+SEXP AttachBoostMutexInfo(SEXP resourceName, SEXP timeout);
+RcppExport SEXP synchronicity_AttachBoostMutexInfo(SEXP resourceNameSEXP, SEXP timeoutSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type resourceName(resourceNameSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type timeout(timeoutSEXP);
+    __result = Rcpp::wrap(AttachBoostMutexInfo(resourceName, timeout));
+    return __result;
+END_RCPP
+}
 // GetResourceName
 SEXP GetResourceName(SEXP mutexInfoAddr);
 RcppExport SEXP synchronicity_GetResourceName(SEXP mutexInfoAddrSEXP) {

@@ -5,7 +5,7 @@
   This function creates a \code{boost.mutex} object.
 }
 \usage{
-boost.mutex(sharedName = NULL, timeout = NULL)
+boost.mutex(sharedName = NULL, timeout = NULL, create=TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -14,6 +14,7 @@ mutex.  By default a universal unique identifier is supplied.}
   \item{timeout}{The amount of time (in seconds) that the mutex should try
 to attempt to get a lock.  By default no timeout is supplied and the
 mutex will attempt to acquire the lock indefinitely.}
+  \item{create}{Should the mutex be created or are we attaching to an existing on. Default is \code{TRUE}.}
 }
 \value{
   This function returns a \code{boost.mutex} object.
@@ -24,6 +25,8 @@ mutex will attempt to acquire the lock indefinitely.}
 \examples{
 # Create a boost.mutex object with default resource name and no timeout.
 x = boost.mutex()
+rm(x)
+gc()
 }
 \keyword{programming}
 \keyword{misc}

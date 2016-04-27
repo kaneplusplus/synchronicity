@@ -91,22 +91,40 @@ setMethod('is.timed', signature(m='boost.mutex'),
   })
 
 #' @export
-boost.mutex=function(sharedName=NULL, timeout=NULL)
+boost.mutex=function(sharedName=NULL, timeout=NULL, create=TRUE)
 {
   isRead = TRUE
-  if (is.null(sharedName)) 
-  {
-    sharedName = uuid()
-  }
   if (!is.null(timeout) && !is.numeric(timeout))
-  {
     stop("The timeout parameter must be numeric.")
-  }
   if (is.numeric(timeout) && timeout <= 0)
-  {
     stop("You must specify a timeout greater than zero.")
+
+  mutexInfoAddr = try({
+    if (create)
+      CreateBoostMutexInfo(sharedName, as.double(timeout))
+    else
+      AttachBoostMutexInfo(sharedName, as.double(timeout))
+  })
+  
+  # Because the check enironment doesn't update the seed...
+  if (inherits(mutexInfoAddr, "try-error") && is.null(sharedName)) {
+    retries = 100
+    success = FALSE
+    retry_counter = 0
+    while (!success && retry_counter < retries) {
+      sharedName = uuid()
+      mutexInfoAddr = 
+        try({
+          if (create)
+            CreateBoostMutexInfo(sharedName, as.double(timeout))
+          else
+            AttachBoostMutexInfo(sharedName, as.double(timeout))
+        })
+      print(mutexInfoAddr)
+      if (!inherits(mutexInfoAddr, "try-error")) success = TRUE
+      retry_counter = retry_counter + 1
+    }
   }
-  mutexInfoAddr=CreateBoostMutexInfo(sharedName, as.double(timeout))
   return(new('boost.mutex', isRead=isRead, mutexInfoAddr=mutexInfoAddr))
 }
 
@@ -207,7 +225,7 @@ setMethod('attach.mutex', signature(obj='boost.mutex.descriptor'),
   {
     desc = description(obj)
     return(boost.mutex(sharedName = desc$shared.name,
-      timeout = desc$timeout))
+      timeout = desc$timeout, FALSE))
   })
 
 
