@@ -1,9 +1,8 @@
 #include <iostream>
 #include <string>
 #include <boost/interprocess/sync/named_upgradable_mutex.hpp>
-#include <boost/interprocess/sync/named_mutex.hpp>
-#include <boost/bind.hpp>
 #include <boost/date_time/local_time/local_date_time.hpp>
+#include <boost/thread/thread_time.hpp>
 
 #include <Rcpp.h>
 
@@ -69,62 +68,6 @@ class BoostMutexInfo
     bool _locked;
     bool _create;
 };
-
-template<typename MutexType, typename LockFunctionType>
-SEXP boost_lock(MutexType &mutex, const LockFunctionType &lockFun)
-{
-//  named_upgradable_mutex mutex(open_or_create, resourceName.c_str());
-  SEXP ret = Rf_protect(Rf_allocVector(LGLSXP,1));
-  try
-  {
-    lockFun(mutex);
-    LOGICAL(ret)[0] = Rboolean(1);
-  }
-  catch (std::exception &e)
-  {
-    LOGICAL(ret)[0] = Rboolean(0);
-    //printf("%s\n", e.what());
-  }
-  Rf_unprotect(1);
-  return ret;
-}
-
-template<typename MutexType, typename TryLockFunctionType>
-SEXP boost_try_lock(MutexType &mutex, const TryLockFunctionType &tryLockFun)
-{
-//  named_upgradable_mutex mutex(open_or_create, resourceName.c_str());
-  SEXP ret = Rf_protect(Rf_allocVector(LGLSXP,1));
-  try
-  {
-    LOGICAL(ret)[0] = tryLockFun(mutex) ? Rboolean(1) : Rboolean(0);
-  }
-  catch (std::exception &e)
-  {
-    LOGICAL(ret)[0] = Rboolean(0);
-    //printf("%s\n", e.what());
-  }
-  Rf_unprotect(1);
-  return ret;
-}
-
-template<typename MutexType, typename UnlockFunctionType>
-SEXP boost_unlock(MutexType &mutex, const UnlockFunctionType &unlockFun)
-{
-//  named_upgradable_mutex mutex(open_or_create, resourceName.c_str());
-  SEXP ret = Rf_protect(Rf_allocVector(LGLSXP,1));
-  try
-  {
-    unlockFun(mutex);
-    LOGICAL(ret)[0] = Rboolean(1);
-  }
-  catch (std::exception &e)
-  {
-    LOGICAL(ret)[0] = Rboolean(0);
-    //printf("%s\n", e.what());
-  }
-  Rf_unprotect(1);
-  return ret;
-}
 
 ptime to_ptime( const long timeout )
 {
@@ -194,18 +137,15 @@ SEXP GetTimeout( SEXP mutexInfoAddr )
 }
 
 // [[Rcpp::export]]
-SEXP IsRead( SEXP mutexInfoAddr )
+bool IsRead( SEXP mutexInfoAddr )
 {
   BoostMutexInfo *pmi= 
     reinterpret_cast<BoostMutexInfo*>(R_ExternalPtrAddr(mutexInfoAddr));
-  SEXP ret = Rf_protect(Rf_allocVector(LGLSXP,1));
-  LOGICAL(ret)[0] = pmi->read() ? Rboolean(1) : Rboolean(0);
-  Rf_unprotect(1);
-  return(ret);
+  return pmi->read();
 }
 
 // [[Rcpp::export]]
-SEXP boost_lock( SEXP mutexInfoAddr )
+bool boost_lock( SEXP mutexInfoAddr )
 {
   BoostMutexInfo *pmi= 
     reinterpret_cast<BoostMutexInfo*>(R_ExternalPtrAddr(mutexInfoAddr));
@@ -213,91 +153,76 @@ SEXP boost_lock( SEXP mutexInfoAddr )
   pmi->read() = false;
   if (pmi->is_timed())
   {
-    return boost_lock( pmi->mutex(),
-      bind( &named_upgradable_mutex::timed_lock, _1, 
-        to_ptime(pmi->timeout()) ) );
+    pmi->mutex().timed_lock(
+      boost::get_system_time() + boost::posix_time::seconds(pmi->timeout()));
   }
   else
   {
-    return boost_lock( pmi->mutex(), bind(&named_upgradable_mutex::lock, _1));
+    pmi->mutex().lock();
   }
+  return true;
 }
 
 // [[Rcpp::export]]
-SEXP boost_try_lock( SEXP mutexInfoAddr )
+bool boost_try_lock( SEXP mutexInfoAddr )
 {
   BoostMutexInfo *pmi= 
     reinterpret_cast<BoostMutexInfo*>(R_ExternalPtrAddr(mutexInfoAddr));
   pmi->locked() = true;
   pmi->read() = false;
-  return boost_try_lock( pmi->mutex(), 
-                         bind( &named_upgradable_mutex::try_lock, _1 ));
+  return pmi->mutex().try_lock();
 }
 
 // [[Rcpp::export]]
-SEXP boost_unlock( SEXP mutexInfoAddr )
+bool boost_unlock( SEXP mutexInfoAddr )
 {
   BoostMutexInfo *pmi= 
     reinterpret_cast<BoostMutexInfo*>(R_ExternalPtrAddr(mutexInfoAddr));
   if (!pmi->locked())
   {
-    SEXP ret = Rf_protect(Rf_allocVector(LGLSXP,1));
-    LOGICAL(ret)[0] = Rboolean(0);
     Rf_warning("This mutex is already unlocked.");
-    Rf_unprotect(1);
-    return(ret);
   }
   pmi->locked() = false;
-  return boost_unlock( pmi->mutex(), 
-    bind( &named_upgradable_mutex::unlock, _1 ));
+  pmi->mutex().unlock();
+  return true;
 }
 
 // [[Rcpp::export]]
-SEXP boost_lock_shared( SEXP mutexInfoAddr )
+bool boost_lock_shared( SEXP mutexInfoAddr )
 {
   BoostMutexInfo *pmi= 
     reinterpret_cast<BoostMutexInfo*>(R_ExternalPtrAddr(mutexInfoAddr));
   pmi->locked() = true;
   pmi->read() = true;
   if (pmi->is_timed())
-  {
-    return boost_lock( pmi->mutex(),
-      bind(&named_upgradable_mutex::timed_lock_sharable, 
-        _1, to_ptime(pmi->timeout())));
-  }
+    pmi->mutex().timed_lock_sharable(to_ptime(pmi->timeout()));
   else
-  {
-    return boost_lock( pmi->mutex(), 
-      bind(&named_upgradable_mutex::lock_sharable, _1));
-  }
+    pmi->mutex().lock_sharable();
+  return true;
 }
 
 // [[Rcpp::export]]
-SEXP boost_try_lock_shared( SEXP mutexInfoAddr )
+bool boost_try_lock_shared( SEXP mutexInfoAddr )
 {
   BoostMutexInfo *pmi= 
     reinterpret_cast<BoostMutexInfo*>(R_ExternalPtrAddr(mutexInfoAddr));
   pmi->locked() = true;
   pmi->read() = true;
-  return boost_lock( pmi->mutex(),
-    bind( &named_upgradable_mutex::try_lock_sharable, _1 ) );
+  return pmi->mutex().try_lock_sharable();
 }
 
 // [[Rcpp::export]]
-SEXP boost_unlock_shared( SEXP mutexInfoAddr )
+bool boost_unlock_shared( SEXP mutexInfoAddr )
 {
   BoostMutexInfo *pmi= 
     reinterpret_cast<BoostMutexInfo*>(R_ExternalPtrAddr(mutexInfoAddr));
   if (!pmi->locked())
   {
-    SEXP ret = Rf_protect(Rf_allocVector(LGLSXP,1));
-    LOGICAL(ret)[0] = Rboolean(0);
     Rf_warning("This mutex is already unlocked.");
-    Rf_unprotect(1);
-    return(ret);
+    return(true);
   }
   pmi->locked() = false;
-  return boost_unlock( pmi->mutex(),
-    bind( &named_upgradable_mutex::unlock_sharable, _1 ) );
+  pmi->mutex().unlock_sharable();
+  return true;
 }
 

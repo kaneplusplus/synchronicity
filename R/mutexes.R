@@ -43,9 +43,9 @@ setMethod('lock', signature(m='boost.mutex'),
     block = match.call()[['block']]
     if (is.null(block)) block=TRUE
     if (!is.logical(block)) stop('The block argument should be logical')
-    block_call = boost_try_lock
-    if (block) block_call = boost_lock
-    block_call(m@mutexInfoAddr)
+
+    if (block) boost_lock(m@mutexInfoAddr)
+    else boost_try_lock(m@mutexInfoAddr)
   })
 
 #' @export
@@ -55,18 +55,19 @@ setMethod('lock.shared', signature(m='boost.mutex'),
     block = match.call()[['block']]
     if (is.null(block)) block=TRUE
     if (!is.logical(block)) stop('The block argument should be logical')
-    block_call = boost_try_lock_shared
-    if (block) block_call = boost_lock_shared
-    block_call(m@mutexInfoAddr)
+    
+    if (block) boost_lock_shared(m@mutexInfoAddr)
+    else boost_try_lock_shared(m@mutexInfoAddr)
   })
 
 #' @export
 setMethod('unlock', signature(m='boost.mutex'),
   function(m, ...)
   {
-    block_call = boost_unlock_shared
-    if (read(m)) block_call = boost_unlock
-    block_call(m@mutexInfoAddr)
+#    block_call = boost_unlock_shared
+#    if (read(m)) block_call = boost_unlock
+#    block_call(m@mutexInfoAddr)
+    boost_unlock(m@mutexInfoAddr)
   })
 
 #' @export

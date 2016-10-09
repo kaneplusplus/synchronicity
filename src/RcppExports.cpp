@@ -52,7 +52,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // IsRead
-SEXP IsRead(SEXP mutexInfoAddr);
+bool IsRead(SEXP mutexInfoAddr);
 RcppExport SEXP synchronicity_IsRead(SEXP mutexInfoAddrSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -63,7 +63,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // boost_lock
-SEXP boost_lock(SEXP mutexInfoAddr);
+bool boost_lock(SEXP mutexInfoAddr);
 RcppExport SEXP synchronicity_boost_lock(SEXP mutexInfoAddrSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -74,7 +74,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // boost_try_lock
-SEXP boost_try_lock(SEXP mutexInfoAddr);
+bool boost_try_lock(SEXP mutexInfoAddr);
 RcppExport SEXP synchronicity_boost_try_lock(SEXP mutexInfoAddrSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -85,7 +85,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // boost_unlock
-SEXP boost_unlock(SEXP mutexInfoAddr);
+bool boost_unlock(SEXP mutexInfoAddr);
 RcppExport SEXP synchronicity_boost_unlock(SEXP mutexInfoAddrSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -96,7 +96,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // boost_lock_shared
-SEXP boost_lock_shared(SEXP mutexInfoAddr);
+bool boost_lock_shared(SEXP mutexInfoAddr);
 RcppExport SEXP synchronicity_boost_lock_shared(SEXP mutexInfoAddrSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -107,7 +107,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // boost_try_lock_shared
-SEXP boost_try_lock_shared(SEXP mutexInfoAddr);
+bool boost_try_lock_shared(SEXP mutexInfoAddr);
 RcppExport SEXP synchronicity_boost_try_lock_shared(SEXP mutexInfoAddrSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -118,7 +118,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // boost_unlock_shared
-SEXP boost_unlock_shared(SEXP mutexInfoAddr);
+bool boost_unlock_shared(SEXP mutexInfoAddr);
 RcppExport SEXP synchronicity_boost_unlock_shared(SEXP mutexInfoAddrSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
