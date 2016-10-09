@@ -43,7 +43,8 @@ setMethod('lock', signature(m='boost.mutex'),
     block = match.call()[['block']]
     if (is.null(block)) block=TRUE
     if (!is.logical(block)) stop('The block argument should be logical')
-    block_call = ifelse(block, boost_lock, boost_try_lock)
+    block_call = boost_try_lock
+    if (block) block_call = boost_lock
     block_call(m@mutexInfoAddr)
   })
 
@@ -54,7 +55,8 @@ setMethod('lock.shared', signature(m='boost.mutex'),
     block = match.call()[['block']]
     if (is.null(block)) block=TRUE
     if (!is.logical(block)) stop('The block argument should be logical')
-    block_call = ifelse(block, boost_lock_shared, boost_try_lock_shared)
+    block_call = boost_try_lock_shared
+    if (block) block_call = boost_lock_shared
     block_call(m@mutexInfoAddr)
   })
 
@@ -62,7 +64,8 @@ setMethod('lock.shared', signature(m='boost.mutex'),
 setMethod('unlock', signature(m='boost.mutex'),
   function(m, ...)
   {
-    block_call = ifelse(read(m), boost_unlock_shared, boost_unlock)
+    block_call = boost_unlock_shared
+    if (read(m)) block_call = boost_unlock
     block_call(m@mutexInfoAddr)
   })
 
@@ -162,6 +165,10 @@ setMethod('description', signature(x='descriptor'),
 #' @export
 setClass('boost.mutex.descriptor', contains='descriptor')
 
+#' @title Describe the boost.mutex object
+#' 
+#' @description The information required to ``attach'' to an existing
+#' mutex object.
 #' @importFrom bigmemory.sri describe
 #' @import methods
 #' @export
