@@ -198,7 +198,8 @@ bool boost_lock_shared( SEXP mutexInfoAddr )
 //  pmi->read() = true;
   bool ret = true;
   if (pmi->is_timed())
-    ret = pmi->mutex().timed_lock_sharable(to_ptime(pmi->timeout()));
+    ret = pmi->mutex().timed_lock_sharable(
+      boost::get_system_time() + boost::posix_time::seconds(pmi->timeout()));
   else
     pmi->mutex().lock_sharable();
   return ret;
