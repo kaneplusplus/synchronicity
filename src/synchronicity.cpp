@@ -149,18 +149,20 @@ bool boost_lock( SEXP mutexInfoAddr )
 {
   BoostMutexInfo *pmi= 
     reinterpret_cast<BoostMutexInfo*>(R_ExternalPtrAddr(mutexInfoAddr));
-  pmi->locked() = true;
-  pmi->read() = false;
+//  pmi->locked() = true;
+//  pmi->read() = false;
+  bool ret;
   if (pmi->is_timed())
   {
-    pmi->mutex().timed_lock(
+    ret = pmi->mutex().timed_lock(
       boost::get_system_time() + boost::posix_time::seconds(pmi->timeout()));
   }
   else
   {
     pmi->mutex().lock();
+    ret = true;
   }
-  return true;
+  return ret;
 }
 
 // [[Rcpp::export]]
@@ -168,8 +170,8 @@ bool boost_try_lock( SEXP mutexInfoAddr )
 {
   BoostMutexInfo *pmi= 
     reinterpret_cast<BoostMutexInfo*>(R_ExternalPtrAddr(mutexInfoAddr));
-  pmi->locked() = true;
-  pmi->read() = false;
+//  pmi->locked() = true;
+//  pmi->read() = false;
   return pmi->mutex().try_lock();
 }
 
@@ -178,11 +180,11 @@ bool boost_unlock( SEXP mutexInfoAddr )
 {
   BoostMutexInfo *pmi= 
     reinterpret_cast<BoostMutexInfo*>(R_ExternalPtrAddr(mutexInfoAddr));
-  if (!pmi->locked())
-  {
-    Rf_warning("This mutex is already unlocked.");
-  }
-  pmi->locked() = false;
+//  if (!pmi->locked())
+//  {
+//    Rf_warning("This mutex is already unlocked.");
+//  }
+//  pmi->locked() = false;
   pmi->mutex().unlock();
   return true;
 }
@@ -192,13 +194,14 @@ bool boost_lock_shared( SEXP mutexInfoAddr )
 {
   BoostMutexInfo *pmi= 
     reinterpret_cast<BoostMutexInfo*>(R_ExternalPtrAddr(mutexInfoAddr));
-  pmi->locked() = true;
-  pmi->read() = true;
+//  pmi->locked() = true;
+//  pmi->read() = true;
+  bool ret = true;
   if (pmi->is_timed())
-    pmi->mutex().timed_lock_sharable(to_ptime(pmi->timeout()));
+    ret = pmi->mutex().timed_lock_sharable(to_ptime(pmi->timeout()));
   else
     pmi->mutex().lock_sharable();
-  return true;
+  return ret;
 }
 
 // [[Rcpp::export]]
@@ -206,8 +209,8 @@ bool boost_try_lock_shared( SEXP mutexInfoAddr )
 {
   BoostMutexInfo *pmi= 
     reinterpret_cast<BoostMutexInfo*>(R_ExternalPtrAddr(mutexInfoAddr));
-  pmi->locked() = true;
-  pmi->read() = true;
+//  pmi->locked() = true;
+//  pmi->read() = true;
   return pmi->mutex().try_lock_sharable();
 }
 
@@ -216,12 +219,12 @@ bool boost_unlock_shared( SEXP mutexInfoAddr )
 {
   BoostMutexInfo *pmi= 
     reinterpret_cast<BoostMutexInfo*>(R_ExternalPtrAddr(mutexInfoAddr));
-  if (!pmi->locked())
-  {
-    Rf_warning("This mutex is already unlocked.");
-    return(true);
-  }
-  pmi->locked() = false;
+//  if (!pmi->locked())
+//  {
+//    Rf_warning("This mutex is already unlocked.");
+//    return(true);
+//  }
+//  pmi->locked() = false;
   pmi->mutex().unlock_sharable();
   return true;
 }

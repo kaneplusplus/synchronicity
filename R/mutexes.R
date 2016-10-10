@@ -16,24 +16,27 @@ setGeneric('lock.shared', function(m, ...) standardGeneric('lock.shared'))
 setGeneric('unlock', function(m, ...) standardGeneric('unlock'))
 
 #' @export
+setGeneric('unlock.shared', function(m, ...) standardGeneric('unlock.shared'))
+
+#' @export
 setClass('boost.mutex', contains='mutex', 
   representation(isRead='logical', mutexInfoAddr='externalptr'))
 
-#' @title Is it a read (shared) mutex?
+#' @title Is it a shared mutex?
 #' 
-#' @description Tells the user if a mutex is a read (shared) mutex. If it is 
+#' @description Tells the user if a mutex is a shared mutex. If it is 
 #' not then it must be a write (exclusive) mutex.
 #' @docType methods
-#' @rdname read-methods
+#' @rdname shared-methods
 #' @param m the mutex 
-#' @return TRUE if the mutex is read (shared), FALSE otherwise.
+#' @return TRUE if the mutex is shared, FALSE otherwise.
 #' @export
-setGeneric('read', function(m) standardGeneric('read'))
+setGeneric('shared', function(m) standardGeneric('shared'))
 
-#' @rdname read-methods
-#' @aliases read,boost.mutex-method
+#' @rdname shared-methods
+#' @aliases shared,boost.mutex-method
 #' @export
-setMethod('read', signature(m='boost.mutex'), function(m) 
+setMethod('shared', signature(m='boost.mutex'), function(m) 
   IsRead(m@mutexInfoAddr))
 
 #' @export
@@ -43,7 +46,6 @@ setMethod('lock', signature(m='boost.mutex'),
     block = match.call()[['block']]
     if (is.null(block)) block=TRUE
     if (!is.logical(block)) stop('The block argument should be logical')
-
     if (block) boost_lock(m@mutexInfoAddr)
     else boost_try_lock(m@mutexInfoAddr)
   })
@@ -55,19 +57,20 @@ setMethod('lock.shared', signature(m='boost.mutex'),
     block = match.call()[['block']]
     if (is.null(block)) block=TRUE
     if (!is.logical(block)) stop('The block argument should be logical')
-    
     if (block) boost_lock_shared(m@mutexInfoAddr)
     else boost_try_lock_shared(m@mutexInfoAddr)
   })
 
 #' @export
 setMethod('unlock', signature(m='boost.mutex'),
-  function(m, ...)
-  {
-#    block_call = boost_unlock_shared
-#    if (read(m)) block_call = boost_unlock
-#    block_call(m@mutexInfoAddr)
+  function(m, ...) {
     boost_unlock(m@mutexInfoAddr)
+  })
+
+#' @export
+setMethod("unlock.shared", signature(m='boost.mutex'),
+  function(m, ...) {
+    boost_unlock_shared(m@mutexInfoAddr)
   })
 
 #' @export
