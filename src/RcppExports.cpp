@@ -7,7 +7,7 @@ using namespace Rcpp;
 
 // CreateBoostMutexInfo
 SEXP CreateBoostMutexInfo(SEXP resourceName, SEXP timeout);
-RcppExport SEXP synchronicity_CreateBoostMutexInfo(SEXP resourceNameSEXP, SEXP timeoutSEXP) {
+RcppExport SEXP _synchronicity_CreateBoostMutexInfo(SEXP resourceNameSEXP, SEXP timeoutSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -19,7 +19,7 @@ END_RCPP
 }
 // AttachBoostMutexInfo
 SEXP AttachBoostMutexInfo(SEXP resourceName, SEXP timeout);
-RcppExport SEXP synchronicity_AttachBoostMutexInfo(SEXP resourceNameSEXP, SEXP timeoutSEXP) {
+RcppExport SEXP _synchronicity_AttachBoostMutexInfo(SEXP resourceNameSEXP, SEXP timeoutSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -31,7 +31,7 @@ END_RCPP
 }
 // GetResourceName
 SEXP GetResourceName(SEXP mutexInfoAddr);
-RcppExport SEXP synchronicity_GetResourceName(SEXP mutexInfoAddrSEXP) {
+RcppExport SEXP _synchronicity_GetResourceName(SEXP mutexInfoAddrSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -42,7 +42,7 @@ END_RCPP
 }
 // GetTimeout
 SEXP GetTimeout(SEXP mutexInfoAddr);
-RcppExport SEXP synchronicity_GetTimeout(SEXP mutexInfoAddrSEXP) {
+RcppExport SEXP _synchronicity_GetTimeout(SEXP mutexInfoAddrSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -53,7 +53,7 @@ END_RCPP
 }
 // IsRead
 bool IsRead(SEXP mutexInfoAddr);
-RcppExport SEXP synchronicity_IsRead(SEXP mutexInfoAddrSEXP) {
+RcppExport SEXP _synchronicity_IsRead(SEXP mutexInfoAddrSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -64,7 +64,7 @@ END_RCPP
 }
 // boost_lock
 bool boost_lock(SEXP mutexInfoAddr);
-RcppExport SEXP synchronicity_boost_lock(SEXP mutexInfoAddrSEXP) {
+RcppExport SEXP _synchronicity_boost_lock(SEXP mutexInfoAddrSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -75,7 +75,7 @@ END_RCPP
 }
 // boost_try_lock
 bool boost_try_lock(SEXP mutexInfoAddr);
-RcppExport SEXP synchronicity_boost_try_lock(SEXP mutexInfoAddrSEXP) {
+RcppExport SEXP _synchronicity_boost_try_lock(SEXP mutexInfoAddrSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -86,7 +86,7 @@ END_RCPP
 }
 // boost_unlock
 bool boost_unlock(SEXP mutexInfoAddr);
-RcppExport SEXP synchronicity_boost_unlock(SEXP mutexInfoAddrSEXP) {
+RcppExport SEXP _synchronicity_boost_unlock(SEXP mutexInfoAddrSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -97,7 +97,7 @@ END_RCPP
 }
 // boost_lock_shared
 bool boost_lock_shared(SEXP mutexInfoAddr);
-RcppExport SEXP synchronicity_boost_lock_shared(SEXP mutexInfoAddrSEXP) {
+RcppExport SEXP _synchronicity_boost_lock_shared(SEXP mutexInfoAddrSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -108,7 +108,7 @@ END_RCPP
 }
 // boost_try_lock_shared
 bool boost_try_lock_shared(SEXP mutexInfoAddr);
-RcppExport SEXP synchronicity_boost_try_lock_shared(SEXP mutexInfoAddrSEXP) {
+RcppExport SEXP _synchronicity_boost_try_lock_shared(SEXP mutexInfoAddrSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -119,7 +119,7 @@ END_RCPP
 }
 // boost_unlock_shared
 bool boost_unlock_shared(SEXP mutexInfoAddr);
-RcppExport SEXP synchronicity_boost_unlock_shared(SEXP mutexInfoAddrSEXP) {
+RcppExport SEXP _synchronicity_boost_unlock_shared(SEXP mutexInfoAddrSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -127,4 +127,24 @@ BEGIN_RCPP
     rcpp_result_gen = Rcpp::wrap(boost_unlock_shared(mutexInfoAddr));
     return rcpp_result_gen;
 END_RCPP
+}
+
+static const R_CallMethodDef CallEntries[] = {
+    {"_synchronicity_CreateBoostMutexInfo", (DL_FUNC) &_synchronicity_CreateBoostMutexInfo, 2},
+    {"_synchronicity_AttachBoostMutexInfo", (DL_FUNC) &_synchronicity_AttachBoostMutexInfo, 2},
+    {"_synchronicity_GetResourceName", (DL_FUNC) &_synchronicity_GetResourceName, 1},
+    {"_synchronicity_GetTimeout", (DL_FUNC) &_synchronicity_GetTimeout, 1},
+    {"_synchronicity_IsRead", (DL_FUNC) &_synchronicity_IsRead, 1},
+    {"_synchronicity_boost_lock", (DL_FUNC) &_synchronicity_boost_lock, 1},
+    {"_synchronicity_boost_try_lock", (DL_FUNC) &_synchronicity_boost_try_lock, 1},
+    {"_synchronicity_boost_unlock", (DL_FUNC) &_synchronicity_boost_unlock, 1},
+    {"_synchronicity_boost_lock_shared", (DL_FUNC) &_synchronicity_boost_lock_shared, 1},
+    {"_synchronicity_boost_try_lock_shared", (DL_FUNC) &_synchronicity_boost_try_lock_shared, 1},
+    {"_synchronicity_boost_unlock_shared", (DL_FUNC) &_synchronicity_boost_unlock_shared, 1},
+    {NULL, NULL, 0}
+};
+
+RcppExport void R_init_synchronicity(DllInfo *dll) {
+    R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
+    R_useDynamicSymbols(dll, FALSE);
 }

@@ -3,7 +3,6 @@
 \docType{class}
 \alias{mutex-class}
 \alias{boost.mutex-class}
-\alias{describe,boost.mutex-method}
 \alias{is.timed,boost.mutex-method}
 \alias{lock.shared,boost.mutex-method}
 \alias{lock,boost.mutex-method}

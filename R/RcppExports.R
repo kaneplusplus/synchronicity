@@ -2,46 +2,46 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 CreateBoostMutexInfo <- function(resourceName, timeout) {
-    .Call('synchronicity_CreateBoostMutexInfo', PACKAGE = 'synchronicity', resourceName, timeout)
+    .Call('_synchronicity_CreateBoostMutexInfo', PACKAGE = 'synchronicity', resourceName, timeout)
 }
 
 AttachBoostMutexInfo <- function(resourceName, timeout) {
-    .Call('synchronicity_AttachBoostMutexInfo', PACKAGE = 'synchronicity', resourceName, timeout)
+    .Call('_synchronicity_AttachBoostMutexInfo', PACKAGE = 'synchronicity', resourceName, timeout)
 }
 
 GetResourceName <- function(mutexInfoAddr) {
-    .Call('synchronicity_GetResourceName', PACKAGE = 'synchronicity', mutexInfoAddr)
+    .Call('_synchronicity_GetResourceName', PACKAGE = 'synchronicity', mutexInfoAddr)
 }
 
 GetTimeout <- function(mutexInfoAddr) {
-    .Call('synchronicity_GetTimeout', PACKAGE = 'synchronicity', mutexInfoAddr)
+    .Call('_synchronicity_GetTimeout', PACKAGE = 'synchronicity', mutexInfoAddr)
 }
 
 IsRead <- function(mutexInfoAddr) {
-    .Call('synchronicity_IsRead', PACKAGE = 'synchronicity', mutexInfoAddr)
+    .Call('_synchronicity_IsRead', PACKAGE = 'synchronicity', mutexInfoAddr)
 }
 
 boost_lock <- function(mutexInfoAddr) {
-    .Call('synchronicity_boost_lock', PACKAGE = 'synchronicity', mutexInfoAddr)
+    .Call('_synchronicity_boost_lock', PACKAGE = 'synchronicity', mutexInfoAddr)
 }
 
 boost_try_lock <- function(mutexInfoAddr) {
-    .Call('synchronicity_boost_try_lock', PACKAGE = 'synchronicity', mutexInfoAddr)
+    .Call('_synchronicity_boost_try_lock', PACKAGE = 'synchronicity', mutexInfoAddr)
 }
 
 boost_unlock <- function(mutexInfoAddr) {
-    .Call('synchronicity_boost_unlock', PACKAGE = 'synchronicity', mutexInfoAddr)
+    .Call('_synchronicity_boost_unlock', PACKAGE = 'synchronicity', mutexInfoAddr)
 }
 
 boost_lock_shared <- function(mutexInfoAddr) {
-    .Call('synchronicity_boost_lock_shared', PACKAGE = 'synchronicity', mutexInfoAddr)
+    .Call('_synchronicity_boost_lock_shared', PACKAGE = 'synchronicity', mutexInfoAddr)
 }
 
 boost_try_lock_shared <- function(mutexInfoAddr) {
-    .Call('synchronicity_boost_try_lock_shared', PACKAGE = 'synchronicity', mutexInfoAddr)
+    .Call('_synchronicity_boost_try_lock_shared', PACKAGE = 'synchronicity', mutexInfoAddr)
 }
 
 boost_unlock_shared <- function(mutexInfoAddr) {
-    .Call('synchronicity_boost_unlock_shared', PACKAGE = 'synchronicity', mutexInfoAddr)
+    .Call('_synchronicity_boost_unlock_shared', PACKAGE = 'synchronicity', mutexInfoAddr)
 }
 

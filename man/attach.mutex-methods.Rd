@@ -3,8 +3,8 @@
 \docType{methods}
 \name{attach.mutex}
 \alias{attach.mutex}
-\alias{attach.mutex,boost.mutex.descriptor-method}
 \alias{attach.mutex,character-method}
+\alias{attach.mutex,boost.mutex.descriptor-method}
 \title{Attach to an existing mutex.}
 \usage{
 attach.mutex(obj, ...)
@@ -25,4 +25,3 @@ A mutex.
 Attach to an existing mutex using either a file or 
 description object
 }
-

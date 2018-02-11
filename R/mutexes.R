@@ -6,15 +6,42 @@
 #' @export
 setClass('mutex')
 
+#' Lock and Unlock a Mutex
+#' 
+#' @description The \code{lock} and \code{unlock} functions allow a user to
+#' specify exclusive or shared access to a resource.
+#' @param m a mutex.
+#' @param ... options associated with the mutex being used including
+#' \code{block} which forces the mutex to return immediately after trying
+#' to acquire a lock
+#' @details A call to \code{lock} gives exclusive access to a resource; no other
+#' mutex may acquire a lock.  A call to to \code{lock.shared} allows other
+#' mutexes to acquire a shared lock on the resource.  When shared lock is
+#' called while a exclusive lock has been acquired, the shared lock will
+#' block until the exclusive lock is release.  Likewise, if an exclusive lock
+#' is called while a shared lock has been acquired, the exclusive lock will
+#' block until the shared lock is released.
+#' @return The function returns \code{TRUE} if the lock is successfully 
+#' called and \code{FALSE} otherwise
+#' @examples 
+#' m = boost.mutex()
+#' lock(m)
+#' # Some code that needs to be synchronized...
+#' unlock(m)
+#' @rdname lock-and-unlock-methods
+#' @aliases unlock.shared,boost.mutex-method
 #' @export
 setGeneric('lock', function(m, ...) standardGeneric('lock'))
 
+#' @rdname lock-and-unlock-methods
 #' @export
 setGeneric('lock.shared', function(m, ...) standardGeneric('lock.shared'))
 
+#' @rdname lock-and-unlock-methods
 #' @export
 setGeneric('unlock', function(m, ...) standardGeneric('unlock'))
 
+#' @rdname lock-and-unlock-methods
 #' @export
 setGeneric('unlock.shared', function(m, ...) standardGeneric('unlock.shared'))
 
@@ -61,6 +88,7 @@ setMethod('lock.shared', signature(m='boost.mutex'),
     else boost_try_lock_shared(m@mutexInfoAddr)
   })
 
+#' @aliases unlock,boost.mutex-method unlock.shared,boost.mutex-method
 #' @export
 setMethod('unlock', signature(m='boost.mutex'),
   function(m, ...) {
@@ -97,6 +125,7 @@ setMethod('is.timed', signature(m='boost.mutex'),
     return(!is.null(timeout(m)))
   })
 
+#' @importFrom uuid UUIDgenerate
 #' @export
 boost.mutex=function(sharedName=NULL, timeout=NULL, create=TRUE)
 {
@@ -107,31 +136,20 @@ boost.mutex=function(sharedName=NULL, timeout=NULL, create=TRUE)
     stop("You must specify a timeout greater than zero.")
 
   mutexInfoAddr = try({
-    if (create)
+    if (create) {
+      if (is.null(sharedName)) {
+        sharedName <- UUIDgenerate()
+        # Darwin's shared resources are only 5 characters long.
+        if (Sys.info()['sysname'] == "Darwin") {
+          sharedName <- substr(sharedName, 1, 5)
+        }
+      }
       CreateBoostMutexInfo(sharedName, as.double(timeout))
+    }
     else
       AttachBoostMutexInfo(sharedName, as.double(timeout))
   })
   
-  # Because the check enironment doesn't update the seed...
-  if (inherits(mutexInfoAddr, "try-error") && is.null(sharedName)) {
-    retries = 100
-    success = FALSE
-    retry_counter = 0
-    while (!success && retry_counter < retries) {
-      sharedName = uuid()
-      mutexInfoAddr = 
-        try({
-          if (create)
-            CreateBoostMutexInfo(sharedName, as.double(timeout))
-          else
-            AttachBoostMutexInfo(sharedName, as.double(timeout))
-        })
-      print(mutexInfoAddr)
-      if (!inherits(mutexInfoAddr, "try-error")) success = TRUE
-      retry_counter = retry_counter + 1
-    }
-  }
   return(new('boost.mutex', isRead=isRead, mutexInfoAddr=mutexInfoAddr))
 }
 
@@ -173,8 +191,11 @@ setClass('boost.mutex.descriptor', contains='descriptor')
 #' 
 #' @description The information required to ``attach'' to an existing
 #' mutex object.
+#' @param x the boost mutex object to describe.
 #' @importFrom bigmemory.sri describe
 #' @import methods
+#' @rdname describe-methods
+#' @aliases describe,boost.mutex-method
 #' @export
 setMethod('describe', signature(x='boost.mutex'),
   function(x)

@@ -20,4 +20,3 @@ a list of description information.
 Retrieve the list of description information from a 
 descriptor object.
 }
-
