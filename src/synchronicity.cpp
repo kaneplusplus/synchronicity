@@ -18,8 +18,12 @@ class BoostMutexInfo
   public:
 
     BoostMutexInfo() : 
-      _timeout(-1), _name(""), _read(true), _locked(false), 
-      _pmutex(NULL), _create(true) {}
+      _timeout(-1), 
+      _name(""), 
+      _pmutex(NULL), 
+      _read(true), 
+      _locked(false), 
+      _create(true) {}
     
     virtual ~BoostMutexInfo() {destroy();}
   
