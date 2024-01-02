@@ -5,6 +5,11 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // CreateBoostMutexInfo
 SEXP CreateBoostMutexInfo(SEXP resourceName, SEXP timeout);
 RcppExport SEXP _synchronicity_CreateBoostMutexInfo(SEXP resourceNameSEXP, SEXP timeoutSEXP) {
