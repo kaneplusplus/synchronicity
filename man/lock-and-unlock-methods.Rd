@@ -2,9 +2,12 @@
 % Please edit documentation in R/mutexes.R
 \name{lock}
 \alias{lock}
+\alias{unlock}
+\alias{lock.shared,boost.mutex-method}
+\alias{lock,boost.mutex-method}
+\alias{unlock,boost.mutex-method}
 \alias{unlock.shared,boost.mutex-method}
 \alias{lock.shared}
-\alias{unlock}
 \alias{unlock.shared}
 \title{Lock and Unlock a Mutex}
 \usage{
@@ -21,11 +24,11 @@ unlock.shared(m, ...)
 
 \item{...}{options associated with the mutex being used including
 \code{block} which forces the mutex to return immediately after trying
-to acquire a lock}
+to acquire a lock.}
 }
 \value{
 The function returns \code{TRUE} if the lock is successfully 
-called and \code{FALSE} otherwise
+called and \code{FALSE} otherwise.
 }
 \description{
 The \code{lock} and \code{unlock} functions allow a user to

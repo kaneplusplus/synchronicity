@@ -3,6 +3,7 @@
 #' @import Rcpp
 #' @useDynLib synchronicity
 
+#' @title The boost.mutex class
 #' @export
 setClass('mutex')
 
@@ -13,7 +14,7 @@ setClass('mutex')
 #' @param m a mutex.
 #' @param ... options associated with the mutex being used including
 #' \code{block} which forces the mutex to return immediately after trying
-#' to acquire a lock
+#' to acquire a lock.
 #' @details A call to \code{lock} gives exclusive access to a resource; no other
 #' mutex may acquire a lock.  A call to to \code{lock.shared} allows other
 #' mutexes to acquire a shared lock on the resource.  When shared lock is
@@ -22,7 +23,9 @@ setClass('mutex')
 #' is called while a shared lock has been acquired, the exclusive lock will
 #' block until the shared lock is released.
 #' @return The function returns \code{TRUE} if the lock is successfully 
-#' called and \code{FALSE} otherwise
+#' called and \code{FALSE} otherwise.
+#' @aliases unlock lock lock.shared,boost.mutex-method lock,boost.mutex-method
+#' unlock,boost.mutex-method
 #' @examples 
 #' m = boost.mutex()
 #' lock(m)
@@ -45,6 +48,7 @@ setGeneric('unlock', function(m, ...) standardGeneric('unlock'))
 #' @export
 setGeneric('unlock.shared', function(m, ...) standardGeneric('unlock.shared'))
 
+#' @title The boost.mutex class
 #' @export
 setClass('boost.mutex', contains='mutex', 
   representation(isRead='logical', mutexInfoAddr='externalptr'))
@@ -101,6 +105,16 @@ setMethod("unlock.shared", signature(m='boost.mutex'),
     boost_unlock_shared(m@mutexInfoAddr)
   })
 
+#' @title The name of a mutex's shared resource
+#' @description This function returns the shared resource associated with a
+#' \code{boost.mutex} object.
+#' @param m a \code{boost.mutex} object 
+#' @return A string specifying the shared resource associated with the given 
+#' \code{boost.mutex} object.
+#' @examples
+#' x = boost.mutex()
+#' print(shared.name(x))
+#' @aliases shared.name,boost.mutex-method
 #' @export
 setGeneric('shared.name', function(m) standardGeneric('shared.name'))
 
@@ -115,16 +129,52 @@ setGeneric('timeout', function(m) standardGeneric('timeout'))
 setMethod('timeout', signature(m='boost.mutex'),
   function(m) GetTimeout(m@mutexInfoAddr))
 
+#' @title Timeout operations for boost.mutex objects
+#' @aliases is.timed timeout is.timed,boost.mutex-method 
+#' timeout,boost.mutex-method
+#' @title Timeout operations for boost.mutex objects 
+#' @description The \code{is.timed} function tells if a \code{boost.mutex} 
+#' object has a timeout.  The \code{timeout} function tells how long a mutex 
+#' will wait for a timeout.
+#' @param m a \code{boost.mutex} object to get timeout information for.
+#' @return 
+#' \code{is.timed} returns \code{TRUE} if the object has a timeout and 
+#' \code{FALSE} otherwise.  If a timeout has been set \code{timeout} returns 
+#' the number of seconds a \code{boost.mutex} object will attempt to acquire 
+#' a lock and \code{NULL} otherwise.
+#' @rdname is_timed
+#' @examples
+#' x = boost.mutex(timeout=5)
+#' y = boost.mutex()
+#' print(is.timed(x))
+#' print(is.timed(y))
+#' print(timeout(x))
+#' print(timeout(y))
 #' @export
 setGeneric('is.timed', function(m) standardGeneric('is.timed'))
 
 #' @export
+#' @rdname is_timed
 setMethod('is.timed', signature(m='boost.mutex'),
   function(m)
   {
     return(!is.null(timeout(m)))
   })
 
+#' @title Create a boost.mutex object
+#' @description This function creates a \code{boost.mutex} object.
+#' @param sharedName The name of the shared resource corresponding to the
+#' mutex.  By default a universal unique identifier is supplied.
+#' @param timeout The amount of time (in seconds) that the mutex should try
+#' to attempt to get a lock.  By default no timeout is supplied and the
+#' mutex will attempt to acquire the lock indefinitely.
+#' @param create Should the mutex be created or are we attaching to an 
+#' existing on. Default is \code{TRUE}.
+#' @examples
+#' # Create a boost.mutex object with default resource name and no timeout.
+#' x = boost.mutex()
+#' rm(x)
+#' gc()
 #' @importFrom uuid UUIDgenerate
 #' @export
 boost.mutex=function(sharedName=NULL, timeout=NULL, create=TRUE)
