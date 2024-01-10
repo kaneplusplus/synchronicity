@@ -17,6 +17,7 @@ LinkingTo: BH, Rcpp
 Description: Boost mutex functionality in R.
 License: LGPL-2 | Apache License 2.0
 URL: http://www.bigmemory.org
+BugReports: https://github.com/kaneplusplus/synchronicity/issues
 LazyLoad: yes
 Encoding: UTF-8
 RoxygenNote: 7.2.3
